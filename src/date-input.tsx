@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import { TextInput, TextInputProps } from './text-input';
 
-type Format = 'DMY' | 'MDY' | 'YMD';
+type Format = 'DMY' | 'MDY' | 'YMD' | 'YDM';
 
 type Props = Omit<
   TextInputProps,
@@ -44,7 +44,6 @@ export function DateInput({
   return (
     <TextInput
       keyboardType="number-pad"
-      placeholder={placeholders[format]}
       format={template}
       maxLength={10}
       {...rest}
@@ -55,18 +54,12 @@ export function DateInput({
 }
 
 function getTemplate(format: Format, separator: string) {
-  if (format === 'YMD') {
+  if (format === 'YMD' || format === 'YDM') {
     return ['0000', '00', '00'].join(separator);
   }
 
   return ['00', '00', '0000'].join(separator);
 }
-
-const placeholders: Record<Format, string> = {
-  DMY: 'DD/MM/YYYY',
-  MDY: 'MM/DD/YYYY',
-  YMD: 'YYYY/MM/DD',
-};
 
 function toInput(date: Date) {
   return `${padNumber(date.getDate())}${padNumber(
@@ -106,21 +99,45 @@ const reSplit4 = /.{1,4}/g;
 const reSplit2 = /.{1,2}/g;
 
 function toISO8601(text: string, format: Format) {
-  if (format === 'YMD') {
-    return text.replace(/\//g, '-');
+  const value = text.replace(/[\W_]/g, '');
+
+  let parts = value.match(reSplit4) || [];
+
+  let yy;
+  let rest;
+
+  if (format === 'YMD' || format === 'YDM') {
+    yy = parts[0];
+    rest = parts[1];
+  } else {
+    rest = parts[0];
+    yy = parts[1];
   }
 
-  const [rest = '', yy = ''] = text.match(reSplit4) || [];
+  const md = rest.match(reSplit2) || [];
 
-  const parts = rest.match(reSplit2) || [];
+  let mm;
+  let dd;
+
+  if (format === 'YMD') {
+    mm = md[0];
+    dd = md[1];
+  }
+
+  if (format === 'YDM') {
+    dd = md[0];
+    mm = md[1];
+  }
 
   if (format === 'DMY') {
-    return `${parts[1]}-${parts[2]}-${yy}`;
+    mm = md[0];
+    dd = md[1];
   }
 
   if (format === 'MDY') {
-    return `${parts[2]}-${parts[1]}-${yy}`;
+    mm = md[0];
+    dd = md[1];
   }
 
-  return '0000-00-00';
+  return `${yy || '0000'}-${mm || '00'}-${dd || '00'}`;
 }
