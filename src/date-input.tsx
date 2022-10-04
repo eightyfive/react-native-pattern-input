@@ -2,6 +2,10 @@ import React, { useCallback, useMemo } from 'react';
 
 import { TextInput, TextInputProps } from './text-input';
 
+const FORMAT_YEAR = '9999';
+const FORMAT_MONTH = '19';
+const FORMAT_DAY = '39';
+
 type Format = 'DMY' | 'MDY' | 'YMD' | 'YDM';
 
 type Props = Omit<
@@ -54,11 +58,23 @@ export function DateInput({
 }
 
 function getTemplate(format: Format, separator: string) {
-  if (format === 'YMD' || format === 'YDM') {
-    return ['0000', '00', '00'].join(separator);
+  if (format === 'DMY') {
+    return [FORMAT_DAY, FORMAT_MONTH, FORMAT_YEAR].join(separator);
   }
 
-  return ['00', '00', '0000'].join(separator);
+  if (format === 'MDY') {
+    return [FORMAT_MONTH, FORMAT_DAY, FORMAT_YEAR].join(separator);
+  }
+
+  if (format === 'YDM') {
+    return [FORMAT_YEAR, FORMAT_DAY, FORMAT_MONTH].join(separator);
+  }
+
+  if (format === 'YMD') {
+    return [FORMAT_YEAR, FORMAT_MONTH, FORMAT_DAY].join(separator);
+  }
+
+  return ['99', '99', '9999'].join(separator);
 }
 
 function toInput(date: Date) {

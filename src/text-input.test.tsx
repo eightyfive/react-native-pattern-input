@@ -42,7 +42,7 @@ describe('TextInput', () => {
 
     render(
       <TextInput
-        format="0000-00-00"
+        format="9999-99-99"
         placeholder="test"
         onChange={handleChange}
         value="1970"
@@ -67,7 +67,7 @@ describe('TextInput', () => {
 
     render(
       <TextInput
-        format="0000-00-00"
+        format="9999-99-99"
         pattern="\d\d-\d\d"
         placeholder="test"
         onChange={handleChange}
