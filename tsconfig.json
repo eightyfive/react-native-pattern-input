@@ -2,8 +2,9 @@
 {
   "extends": "@tsconfig/react-native/tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "outDir": "dist",
+    "noEmit": false,
     "skipLibCheck": true
-  }
+  },
+  "include": ["src/**/*"]
 }
