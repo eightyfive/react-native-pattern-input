@@ -5,7 +5,7 @@
   "author": "0x55 <0xfiftyfive@gmail.com>",
   "license": "ISC",
   "scripts": {
-    "build": "rm -rf dist && tsc -p .",
+    "build": "tsc -p .",
     "test": "jest src/",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "release": "np"
@@ -27,10 +27,11 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },
+  "peerDependencies": {
+    "react-native": "*"
+  },
   "dependencies": {
-    "format-pattern": "^0.1.0",
-    "react": "18.1.0",
-    "react-native": "0.70.1"
+    "format-pattern": "^0.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -47,6 +48,8 @@
     "eslint": "^7.32.0",
     "jest": "^26",
     "metro-react-native-babel-preset": "^0.72.1",
+    "react": "^18.2.0",
+    "react-native": "^0.70.1",
     "react-test-renderer": "18.1.0",
     "typescript": "^4.8.4"
   },
