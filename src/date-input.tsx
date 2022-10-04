@@ -1,16 +1,26 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { TextInput, TextInputProps } from './text-input';
 
 type Format = 'DMY' | 'MDY' | 'YMD';
 
-type Props = Omit<TextInputProps, 'format' | 'onChange' | 'value'> & {
-  format?: Format;
+type Props = Omit<
+  TextInputProps,
+  'format' | 'pattern' | 'onChange' | 'value'
+> & {
+  format: Format;
   onChange?: (date: Date | null) => void;
-  value: Date | null;
+  separator?: string;
+  value?: Date | null;
 };
 
-export function DateInput({ format = 'YMD', onChange, value, ...rest }: Props) {
+export function DateInput({
+  format,
+  onChange,
+  separator = '/',
+  value,
+  ...rest
+}: Props) {
   // Hooks
   const handleChange = useCallback(
     (text: string | null) => {
@@ -25,25 +35,32 @@ export function DateInput({ format = 'YMD', onChange, value, ...rest }: Props) {
     [format, onChange],
   );
 
+  const template = useMemo(
+    () => getTemplate(format, separator),
+    [format, separator],
+  );
+
   // Render
   return (
     <TextInput
       keyboardType="number-pad"
       placeholder={placeholders[format]}
-      format={formats[format]}
+      format={template}
       maxLength={10}
       {...rest}
       onChange={handleChange}
-      value={value === null ? '' : toInput(value)}
+      value={value === null ? '' : value ? toInput(value) : value}
     />
   );
 }
 
-const formats: Record<Format, string> = {
-  DMY: '00/00/0000',
-  MDY: '00/00/0000',
-  YMD: '0000/00/00',
-};
+function getTemplate(format: Format, separator: string) {
+  if (format === 'YMD') {
+    return ['0000', '00', '00'].join(separator);
+  }
+
+  return ['00', '00', '0000'].join(separator);
+}
 
 const placeholders: Record<Format, string> = {
   DMY: 'DD/MM/YYYY',
@@ -53,7 +70,7 @@ const placeholders: Record<Format, string> = {
 
 function toInput(date: Date) {
   return `${padNumber(date.getDate())}${padNumber(
-    date.getMonth(),
+    date.getMonth() + 1,
   )}${date.getFullYear()}`;
 }
 
