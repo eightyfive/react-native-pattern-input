@@ -1,5 +1,5 @@
 import 'react-native';
-import React, { ReactComponentElement, ReactElement } from 'react';
+import React from 'react';
 
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { TextInput } from './text-input';
@@ -56,6 +56,29 @@ describe('TextInput', () => {
     expect(handleChange).toHaveBeenCalledWith(null);
 
     fireOnChange(el, '1970-0');
+    expect(handleChange).toHaveBeenCalledWith(null);
+
+    fireOnChange(el, '1970-01-01');
+    expect(handleChange).toHaveBeenCalledWith('1970-01-01');
+  });
+
+  test('format + pattern (ignore)', () => {
+    const handleChange = jest.fn();
+
+    render(
+      <TextInput
+        format="0000-00-00"
+        pattern="\d\d-\d\d"
+        placeholder="test"
+        onChange={handleChange}
+        value="19-70"
+      />,
+    );
+
+    const el = screen.getByPlaceholderText('test');
+    expect(el.props.value).toBe('1970-');
+
+    fireOnChange(el, '12-34');
     expect(handleChange).toHaveBeenCalledWith(null);
 
     fireOnChange(el, '1970-01-01');

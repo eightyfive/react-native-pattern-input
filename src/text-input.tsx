@@ -30,10 +30,10 @@ export function TextInput({
   // Hooks
   const re = useMemo(
     () =>
-      pattern
-        ? new RegExp(`^${pattern}$`)
-        : template
+      template
         ? patternize(template)
+        : pattern
+        ? new RegExp(`^${pattern}$`)
         : null,
     [pattern, template],
   );
