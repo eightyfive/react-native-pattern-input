@@ -46,6 +46,7 @@ export function DateInput({
       keyboardType="number-pad"
       format={template}
       maxLength={10}
+      placeholder={getPlaceholder(format, separator)}
       {...rest}
       onChange={handleChange}
       value={
@@ -74,6 +75,27 @@ function getTemplate(format: Format, separator: string) {
 
   if (format === 'YMD') {
     return [FORMAT_YEAR, FORMAT_MONTH, FORMAT_DAY].join(separator);
+  }
+
+  // Never happens
+  return '';
+}
+
+function getPlaceholder(format: Format, separator: string) {
+  if (format === 'DMY') {
+    return ['DD', 'MM', 'YYYY'].join(separator);
+  }
+
+  if (format === 'MDY') {
+    return ['MM', 'DD', 'YYYY'].join(separator);
+  }
+
+  if (format === 'YDM') {
+    return ['YYYY', 'DD', 'MM'].join(separator);
+  }
+
+  if (format === 'YMD') {
+    return ['YYYY', 'MM', 'DD'].join(separator);
   }
 
   // Never happens
