@@ -84,8 +84,10 @@ export function TextInput({
 
             const hasChanged = isNewValid !== isOldValid;
 
-            if (isNewValid || hasChanged) {
-              onValueChange(newValue || null);
+            if (isNewValid) {
+              onValueChange(newValue);
+            } else if (hasChanged) {
+              onValueChange(null);
             }
           } else {
             onValueChange(newValue || null);
