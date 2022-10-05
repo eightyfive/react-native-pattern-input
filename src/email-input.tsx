@@ -1,7 +1,9 @@
 import React from 'react';
 import { TextInput, TextInputProps } from './text-input';
 
-export function EmailInput(props: TextInputProps) {
+export type EmailInputProps = TextInputProps;
+
+export function EmailInput(props: EmailInputProps) {
   return (
     <TextInput
       autoCapitalize="none"

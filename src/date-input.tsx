@@ -2,13 +2,9 @@ import React, { useCallback, useMemo } from 'react';
 
 import { TextInput, TextInputProps } from './text-input';
 
-const FORMAT_YEAR = '9999';
-const FORMAT_MONTH = '19';
-const FORMAT_DAY = '39';
-
 type Format = 'DMY' | 'MDY' | 'YMD' | 'YDM';
 
-type Props = Omit<
+export type DateInputProps = Omit<
   TextInputProps,
   'format' | 'pattern' | 'onChange' | 'value'
 > & {
@@ -24,7 +20,7 @@ export function DateInput({
   separator = '/',
   value,
   ...rest
-}: Props) {
+}: DateInputProps) {
   // Hooks
   const handleChange = useCallback(
     (text: string | null) => {
@@ -58,6 +54,10 @@ export function DateInput({
     />
   );
 }
+
+const FORMAT_YEAR = '9999';
+const FORMAT_MONTH = '19';
+const FORMAT_DAY = '39';
 
 function getTemplate(format: Format, separator: string) {
   if (format === 'DMY') {
