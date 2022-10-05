@@ -52,7 +52,9 @@ export function DateInput({
       maxLength={10}
       {...rest}
       onChange={handleChange}
-      value={value === null ? '' : value ? toInput(value, format) : value}
+      value={
+        value === null ? '' : value ? toValue(value, format, separator) : value
+      }
     />
   );
 }
@@ -74,30 +76,32 @@ function getTemplate(format: Format, separator: string) {
     return [FORMAT_YEAR, FORMAT_MONTH, FORMAT_DAY].join(separator);
   }
 
-  return ['99', '99', '9999'].join(separator);
+  // Never happens
+  return '';
 }
 
-function toInput(date: Date, format: Format) {
+function toValue(date: Date, format: Format, separator: string) {
   const dd = padNumber(date.getDate());
   const mm = padNumber(date.getMonth() + 1);
   const yy = date.getFullYear();
 
   if (format === 'DMY') {
-    return `${dd}${mm}${yy}`;
+    return [dd, mm, yy].join(separator);
   }
 
   if (format === 'MDY') {
-    return `${mm}${dd}${yy}`;
+    return [mm, dd, yy].join(separator);
   }
 
   if (format === 'YDM') {
-    return `${yy}${dd}${mm}`;
+    return [yy, dd, mm].join(separator);
   }
 
   if (format === 'YMD') {
-    return `${yy}${mm}${dd}`;
+    return [yy, mm, dd].join(separator);
   }
 
+  // Never happens
   return '';
 }
 
