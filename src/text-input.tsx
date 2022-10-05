@@ -46,6 +46,7 @@ export function TextInput({
   const handleChangeText = useCallback(
     (text: string) => {
       if (!text) {
+        setValue('');
         setInternalValue('');
       }
 
