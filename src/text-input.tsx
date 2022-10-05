@@ -6,10 +6,9 @@ import {
   TextInputKeyPressEventData,
   TextInputProps as RNTextInputProps,
 } from 'react-native';
-import { formatInput, patternize, unformat } from './services';
+import { formatInput, isCharValid, patternize, unformat } from './services';
 
 const KEY_BACKSPACE = 'Backspace';
-const KEY_ENTER = 'Enter';
 
 export type TextInputProps = Omit<RNTextInputProps, 'onChange' | 'value'> & {
   format?: string;
@@ -23,6 +22,7 @@ export function TextInput({
   format: template,
   onChange,
   onChangeEvent,
+  onChangeText,
   onKeyPress,
   pattern,
   value,
@@ -43,6 +43,19 @@ export function TextInput({
     [pattern, template],
   );
 
+  const handleChangeText = useCallback(
+    (text: string) => {
+      if (!text) {
+        setInternalValue('');
+      }
+
+      if (onChangeText) {
+        onChangeText(text);
+      }
+    },
+    [onChangeText],
+  );
+
   const handleKeyPress = useCallback(
     (ev: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
       const { key } = ev.nativeEvent;
@@ -51,13 +64,11 @@ export function TextInput({
 
       if (key === KEY_BACKSPACE) {
         newInternalValue = newInternalValue.slice(0, -1);
-      } else if (key !== KEY_ENTER) {
+      } else if (
+        !template ||
+        (template && isCharValid(key, template, internalValue.length))
+      ) {
         newInternalValue += key;
-      }
-
-      if (template) {
-        // Force alphanum
-        newInternalValue = unformat(newInternalValue);
       }
 
       if (newInternalValue !== internalValue) {
@@ -94,6 +105,7 @@ export function TextInput({
     <RNTextInput
       {...rest}
       onChange={onChangeEvent}
+      onChangeText={handleChangeText}
       onKeyPress={handleKeyPress}
       value={displayValue}
     />

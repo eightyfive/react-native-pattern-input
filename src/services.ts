@@ -28,14 +28,7 @@ export function formatInput(input: string, template: string) {
 
     const inputChar = input.charAt(index);
 
-    const isValid =
-      (RE_NUM.test(templateChar) &&
-        RE_NUM.test(inputChar) &&
-        Number(inputChar) <= Number(templateChar)) ||
-      (templateChar === 'a' && RE_ALPHA.test(inputChar)) ||
-      (templateChar === 'A' && RE_ALPHANUM.test(inputChar));
-
-    if (!isValid) {
+    if (!isCharValid(inputChar, template, index)) {
       break;
     }
 
@@ -44,6 +37,22 @@ export function formatInput(input: string, template: string) {
   }
 
   return value;
+}
+
+export function isCharValid(
+  inputChar: string,
+  template: string,
+  index: number,
+) {
+  const templateChar = unformat(template).charAt(index);
+
+  return (
+    (RE_NUM.test(templateChar) &&
+      RE_NUM.test(inputChar) &&
+      Number(inputChar) <= Number(templateChar)) ||
+    (templateChar === 'a' && RE_ALPHA.test(inputChar)) ||
+    (templateChar === 'A' && RE_ALPHANUM.test(inputChar))
+  );
 }
 
 export function patternize(template: string) {
