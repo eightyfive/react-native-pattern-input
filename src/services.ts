@@ -8,9 +8,7 @@ export function unformat(text: string) {
   return text.replace(RE_ESCAPE, '');
 }
 
-export function format(text: string, template: string) {
-  const input = unformat(text);
-
+export function formatInput(input: string, template: string) {
   if (!input) {
     return '';
   }

@@ -10,19 +10,22 @@ describe('DateInput', () => {
     const handleChange = jest.fn();
 
     render(
-      <DateInput format="YMD" placeholder="test" onChange={handleChange} />,
+      <DateInput
+        format="YMD"
+        placeholder="test"
+        onChange={handleChange}
+        value={new Date(2022, 11, 30)}
+      />,
     );
 
     const el = screen.getByPlaceholderText('test');
+    expect(el.props.value).toBe('2022/12/30');
 
-    fireOnChange(el, '');
+    fireKeyPress(el, 'Backspace');
     expect(handleChange).toHaveBeenCalledWith(null);
 
-    fireOnChange(el, '2022');
-    expect(handleChange).toHaveBeenCalledWith(null);
-
-    fireOnChange(el, '2022/10/04');
-    expect(handleChange).toHaveBeenCalledWith(new Date(2022, 9, 4));
+    fireKeyPress(el, '1');
+    expect(handleChange).toHaveBeenCalledWith(new Date(2022, 11, 31));
   });
 
   test('separator', () => {
@@ -40,6 +43,6 @@ describe('DateInput', () => {
   });
 });
 
-function fireOnChange(el: ReactTestInstance, text: string) {
-  fireEvent(el, 'onChange', { nativeEvent: { text } });
+function fireKeyPress(el: ReactTestInstance, key: string) {
+  fireEvent(el, 'onKeyPress', { nativeEvent: { key } });
 }

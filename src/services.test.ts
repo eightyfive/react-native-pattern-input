@@ -1,4 +1,4 @@
-import { format, patternize, unformat } from './services';
+import { formatInput as format, patternize, unformat } from './services';
 
 const DATE_FORMAT = '39/19/2199';
 const PHONE_FORMAT = '+(99) 999-999-999';

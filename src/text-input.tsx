@@ -1,66 +1,88 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   NativeSyntheticEvent,
   TextInput as RNTextInput,
-  TextInputChangeEventData,
+  TextInputKeyPressEventData,
   TextInputProps as RNTextInputProps,
 } from 'react-native';
-import {
-  format as formatValue,
-  patternize,
-  unformat as unformatValue,
-} from './services';
+import { formatInput, patternize, unformat } from './services';
+
+const KEY_BACKSPACE = 'Backspace';
+const KEY_ENTER = 'Enter';
 
 export type TextInputProps = Omit<RNTextInputProps, 'onChange' | 'value'> & {
   format?: string;
   onChange?: (text: string | null) => void;
   pattern?: string;
-  unformat?: boolean;
   value?: string | null;
 };
 
 export function TextInput({
   format: template,
   onChange,
+  onKeyPress,
   pattern,
-  unformat = false,
   value,
   ...rest
 }: TextInputProps) {
   // Hooks
-  const re = useMemo(() => {
-    const exp = template ? patternize(template) : pattern;
+  const initialValue = value || '';
 
-    return exp ? new RegExp(`^${exp}$`) : null;
-  }, [pattern, template]);
+  const [internalValue, setInternalValue] = useState(
+    template ? unformat(initialValue) : initialValue,
+  );
 
-  const handleChange = useCallback(
-    (ev: NativeSyntheticEvent<TextInputChangeEventData>) => {
-      const { text } = ev.nativeEvent;
+  const re = useMemo(
+    () =>
+      template || pattern
+        ? new RegExp(`^${template ? patternize(template) : pattern}$`)
+        : null,
+    [pattern, template],
+  );
 
-      if (onChange) {
-        if (re) {
-          onChange(
-            re.test(text) ? (unformat ? unformatValue(text) : text) : null,
-          );
-        } else {
-          onChange(text);
+  const handleKeyPress = useCallback(
+    (ev: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+      const { key } = ev.nativeEvent;
+
+      let newInternalValue = internalValue;
+
+      if (key === KEY_BACKSPACE) {
+        newInternalValue = newInternalValue.slice(0, -1);
+      } else if (key !== KEY_ENTER) {
+        newInternalValue += key;
+      }
+
+      if (newInternalValue !== internalValue) {
+        if (onChange) {
+          const newValue = template
+            ? formatInput(newInternalValue, template)
+            : newInternalValue;
+
+          onChange(!re || (re && re.test(newValue)) ? newValue : null);
         }
+
+        setInternalValue(newInternalValue);
+      }
+
+      if (onKeyPress) {
+        onKeyPress(ev);
       }
     },
-    [onChange, re, unformat],
+    [internalValue, onChange, onKeyPress, re, template],
   );
 
   // Render
-  let text;
+  let displayValue;
 
-  if (value === null) {
-    text = '';
-  } else if (value) {
-    text = template ? formatValue(value, template) : value;
+  if (internalValue) {
+    displayValue = template
+      ? formatInput(internalValue, template)
+      : internalValue;
   } else {
-    text = undefined;
+    displayValue = '';
   }
 
-  return <RNTextInput {...rest} onChange={handleChange} value={text} />;
+  return (
+    <RNTextInput {...rest} onKeyPress={handleKeyPress} value={displayValue} />
+  );
 }

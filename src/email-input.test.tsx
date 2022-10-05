@@ -9,21 +9,27 @@ describe('EmailInput', () => {
   test('onChange', () => {
     const handleChange = jest.fn();
 
-    render(<EmailInput placeholder="test" onChange={handleChange} />);
+    render(
+      <EmailInput
+        placeholder="test"
+        onChange={handleChange}
+        value="john@example."
+      />,
+    );
 
     const el = screen.getByPlaceholderText('test');
 
-    fireOnChange(el, '');
+    fireKeyPress(el, 'o');
     expect(handleChange).toHaveBeenCalledWith(null);
 
-    fireOnChange(el, 'john@');
+    fireKeyPress(el, 'r');
     expect(handleChange).toHaveBeenCalledWith(null);
 
-    fireOnChange(el, 'john@exmaple.org');
-    expect(handleChange).toHaveBeenCalledWith('john@exmaple.org');
+    fireKeyPress(el, 'g');
+    expect(handleChange).toHaveBeenCalledWith('john@example.org');
   });
 });
 
-function fireOnChange(el: ReactTestInstance, text: string) {
-  fireEvent(el, 'onChange', { nativeEvent: { text } });
+function fireKeyPress(el: ReactTestInstance, key: string) {
+  fireEvent(el, 'onKeyPress', { nativeEvent: { key } });
 }

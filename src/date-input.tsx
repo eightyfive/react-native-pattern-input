@@ -52,7 +52,7 @@ export function DateInput({
       maxLength={10}
       {...rest}
       onChange={handleChange}
-      value={value === null ? '' : value ? toInput(value) : value}
+      value={value === null ? '' : value ? toInput(value, format) : value}
     />
   );
 }
@@ -77,10 +77,28 @@ function getTemplate(format: Format, separator: string) {
   return ['99', '99', '9999'].join(separator);
 }
 
-function toInput(date: Date) {
-  return `${padNumber(date.getDate())}${padNumber(
-    date.getMonth() + 1,
-  )}${date.getFullYear()}`;
+function toInput(date: Date, format: Format) {
+  const dd = padNumber(date.getDate());
+  const mm = padNumber(date.getMonth() + 1);
+  const yy = date.getFullYear();
+
+  if (format === 'DMY') {
+    return `${dd}${mm}${yy}`;
+  }
+
+  if (format === 'MDY') {
+    return `${mm}${dd}${yy}`;
+  }
+
+  if (format === 'YDM') {
+    return `${yy}${dd}${mm}`;
+  }
+
+  if (format === 'YMD') {
+    return `${yy}${mm}${dd}`;
+  }
+
+  return '';
 }
 
 function padNumber(value: number) {
