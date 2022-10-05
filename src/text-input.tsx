@@ -9,7 +9,7 @@ import {
   format as formatValue,
   patternize,
   unformat as unformatValue,
-} from 'format-pattern';
+} from './services';
 
 export type TextInputProps = Omit<RNTextInputProps, 'onChange' | 'value'> & {
   format?: string;
@@ -28,15 +28,11 @@ export function TextInput({
   ...rest
 }: TextInputProps) {
   // Hooks
-  const re = useMemo(
-    () =>
-      template
-        ? patternize(template)
-        : pattern
-        ? new RegExp(`^${pattern}$`)
-        : null,
-    [pattern, template],
-  );
+  const re = useMemo(() => {
+    const exp = template ? patternize(template) : pattern;
+
+    return exp ? new RegExp(`^${exp}$`) : null;
+  }, [pattern, template]);
 
   const handleChange = useCallback(
     (ev: NativeSyntheticEvent<TextInputChangeEventData>) => {

@@ -3271,11 +3271,6 @@ form-data@^3.0.0:
     combined-stream "^1.0.8"
     mime-types "^2.1.12"
 
-format-pattern@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/format-pattern/-/format-pattern-0.1.1.tgz#a14d11710e296cdad7c8c0a42cdadaeefb250f27"
-  integrity sha512-dAvcRiZH1EKeXct1dgDF0U5zxER4c/v+aG9Izu9EIs58GdzmjFeTpQOK3i1uk8T3Flunv459NAJUYoTx02bCMA==
-
 fragment-cache@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/fragment-cache/-/fragment-cache-0.2.1.tgz#4290fad27f13e89be7f33799c6bc5a0abfff0d19"
