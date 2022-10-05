@@ -9,10 +9,11 @@ import { formatInput, isCharValid, patternize, unformat } from './services';
 
 const KEY_BACKSPACE = 'Backspace';
 
-export type TextInputProps = RNTextInputProps & {
+export type TextInputProps = Omit<RNTextInputProps, 'value'> & {
   format?: string;
   onValueChange?: (text: string | null) => void;
   pattern?: string;
+  value?: string | null;
 };
 
 export function TextInput({
