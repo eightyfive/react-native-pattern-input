@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useState } from 'react';
 import {
   NativeSyntheticEvent,
   TextInput as RNTextInput,
-  TextInputChangeEventData,
   TextInputKeyPressEventData,
   TextInputProps as RNTextInputProps,
 } from 'react-native';
@@ -10,26 +9,26 @@ import { formatInput, isCharValid, patternize, unformat } from './services';
 
 const KEY_BACKSPACE = 'Backspace';
 
-export type TextInputProps = Omit<RNTextInputProps, 'onChange' | 'value'> & {
+export type TextInputProps = RNTextInputProps & {
   format?: string;
-  onChange?: (text: string | null) => void;
-  onChangeEvent?: (ev: NativeSyntheticEvent<TextInputChangeEventData>) => void;
+  onValueChange?: (text: string | null) => void;
   pattern?: string;
-  value?: string | null;
 };
 
 export function TextInput({
   format: template,
-  onChange,
-  onChangeEvent,
+  onValueChange,
   onChangeText,
   onKeyPress,
   pattern,
-  value,
   ...rest
 }: TextInputProps) {
   // Hooks
-  const initialValue = value || '';
+  const initialValue = rest.value || '';
+
+  const [value, setValue] = useState(
+    template ? formatInput(unformat(initialValue), template) : initialValue,
+  );
 
   const [internalValue, setInternalValue] = useState(
     template ? unformat(initialValue) : initialValue,
@@ -72,14 +71,26 @@ export function TextInput({
       }
 
       if (newInternalValue !== internalValue) {
-        if (onChange) {
-          const newValue = template
-            ? formatInput(newInternalValue, template)
-            : newInternalValue;
+        let newValue = template
+          ? formatInput(newInternalValue, template)
+          : newInternalValue;
 
-          onChange(!re || (re && re.test(newValue)) ? newValue : null);
+        if (onValueChange) {
+          if (re) {
+            const isOldValid = re.test(value);
+            const isNewValid = re.test(newValue);
+
+            const hasChanged = isNewValid !== isOldValid;
+
+            if (isNewValid || hasChanged) {
+              onValueChange(newValue || null);
+            }
+          } else {
+            onValueChange(newValue || null);
+          }
         }
 
+        setValue(newValue);
         setInternalValue(newInternalValue);
       }
 
@@ -87,27 +98,16 @@ export function TextInput({
         onKeyPress(ev);
       }
     },
-    [internalValue, onChange, onKeyPress, re, template],
+    [internalValue, template, onKeyPress, re, value, onValueChange],
   );
 
   // Render
-  let displayValue;
-
-  if (internalValue) {
-    displayValue = template
-      ? formatInput(internalValue, template)
-      : internalValue;
-  } else {
-    displayValue = '';
-  }
-
   return (
     <RNTextInput
       {...rest}
-      onChange={onChangeEvent}
       onChangeText={handleChangeText}
       onKeyPress={handleKeyPress}
-      value={displayValue}
+      value={value}
     />
   );
 }

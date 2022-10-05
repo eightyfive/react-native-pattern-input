@@ -6,13 +6,13 @@ import { EmailInput } from './email-input';
 import { ReactTestInstance } from 'react-test-renderer';
 
 describe('EmailInput', () => {
-  test('onChange', () => {
+  test('onValueChange', () => {
     const handleChange = jest.fn();
 
     render(
       <EmailInput
         placeholder="test"
-        onChange={handleChange}
+        onValueChange={handleChange}
         value="john@example."
       />,
     );
@@ -20,10 +20,10 @@ describe('EmailInput', () => {
     const el = screen.getByPlaceholderText('test');
 
     fireKeyPress(el, 'o');
-    expect(handleChange).toHaveBeenCalledWith(null);
+    expect(handleChange).not.toHaveBeenCalled();
 
     fireKeyPress(el, 'r');
-    expect(handleChange).toHaveBeenCalledWith(null);
+    expect(handleChange).toHaveBeenCalledWith('john@example.or');
 
     fireKeyPress(el, 'g');
     expect(handleChange).toHaveBeenCalledWith('john@example.org');

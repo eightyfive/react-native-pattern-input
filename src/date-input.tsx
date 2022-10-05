@@ -6,17 +6,17 @@ type Format = 'DMY' | 'MDY' | 'YMD' | 'YDM';
 
 export type DateInputProps = Omit<
   TextInputProps,
-  'format' | 'pattern' | 'onChange' | 'value'
+  'format' | 'pattern' | 'onValueChange' | 'value'
 > & {
   format: Format;
-  onChange?: (date: Date | null) => void;
+  onValueChange?: (date: Date | null) => void;
   separator?: string;
   value?: Date | null;
 };
 
 export function DateInput({
   format,
-  onChange,
+  onValueChange,
   separator = '/',
   value,
   ...rest
@@ -24,15 +24,11 @@ export function DateInput({
   // Hooks
   const handleChange = useCallback(
     (text: string | null) => {
-      if (onChange) {
-        if (text === null) {
-          onChange(null);
-        } else {
-          onChange(toDate(text, format));
-        }
+      if (onValueChange) {
+        onValueChange(text ? toDate(text, format) : null);
       }
     },
-    [format, onChange],
+    [format, onValueChange],
   );
 
   const template = useMemo(
@@ -48,7 +44,7 @@ export function DateInput({
       maxLength={10}
       placeholder={getPlaceholder(format, separator)}
       {...rest}
-      onChange={handleChange}
+      onValueChange={handleChange}
       value={
         value === null ? '' : value ? toValue(value, format, separator) : value
       }

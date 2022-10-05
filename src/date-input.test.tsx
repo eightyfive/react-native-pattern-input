@@ -6,14 +6,14 @@ import { DateInput } from './date-input';
 import { ReactTestInstance } from 'react-test-renderer';
 
 describe('DateInput', () => {
-  test('onChange', () => {
+  test('onValueChange', () => {
     const handleChange = jest.fn();
 
     render(
       <DateInput
         format="YMD"
         placeholder="test"
-        onChange={handleChange}
+        onValueChange={handleChange}
         value={new Date(2022, 11, 30)}
       />,
     );
