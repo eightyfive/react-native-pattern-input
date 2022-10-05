@@ -52,6 +52,11 @@ export function TextInput({
         newInternalValue += key;
       }
 
+      if (template) {
+        // Force alphanum
+        newInternalValue = unformat(newInternalValue);
+      }
+
       if (newInternalValue !== internalValue) {
         if (onChange) {
           const newValue = template
