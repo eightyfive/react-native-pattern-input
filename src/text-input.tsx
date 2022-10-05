@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import {
   NativeSyntheticEvent,
   TextInput as RNTextInput,
+  TextInputChangeEventData,
   TextInputKeyPressEventData,
   TextInputProps as RNTextInputProps,
 } from 'react-native';
@@ -13,6 +14,7 @@ const KEY_ENTER = 'Enter';
 export type TextInputProps = Omit<RNTextInputProps, 'onChange' | 'value'> & {
   format?: string;
   onChange?: (text: string | null) => void;
+  onChangeEvent?: (ev: NativeSyntheticEvent<TextInputChangeEventData>) => void;
   pattern?: string;
   value?: string | null;
 };
@@ -20,6 +22,7 @@ export type TextInputProps = Omit<RNTextInputProps, 'onChange' | 'value'> & {
 export function TextInput({
   format: template,
   onChange,
+  onChangeEvent,
   onKeyPress,
   pattern,
   value,
@@ -88,6 +91,11 @@ export function TextInput({
   }
 
   return (
-    <RNTextInput {...rest} onKeyPress={handleKeyPress} value={displayValue} />
+    <RNTextInput
+      {...rest}
+      onChange={onChangeEvent}
+      onKeyPress={handleKeyPress}
+      value={displayValue}
+    />
   );
 }
