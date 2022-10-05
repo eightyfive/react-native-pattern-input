@@ -71,7 +71,7 @@ export function TextInput({
       }
 
       if (newInternalValue !== internalValue) {
-        let newValue = template
+        const newValue = template
           ? formatInput(newInternalValue, template)
           : newInternalValue;
 
