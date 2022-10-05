@@ -5,7 +5,7 @@
   "author": "0x55 <0xfiftyfive@gmail.com>",
   "license": "ISC",
   "scripts": {
-    "build": "tsc -p .",
+    "build": "rm -rf dist && tsc -p .",
     "test": "jest src/",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "release": "np"
