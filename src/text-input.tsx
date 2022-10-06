@@ -21,10 +21,11 @@ export function TextInput({
   onChangeText,
   onKeyPress,
   pattern,
+  value: valueProp,
   ...rest
 }: TextInputProps) {
   // Hooks
-  const initialValue = rest.value || '';
+  const initialValue = valueProp || '';
 
   const [value, setValue] = useState(
     template ? formatInput(unformat(initialValue), template) : initialValue,
@@ -44,18 +45,20 @@ export function TextInput({
 
   const handleChangeText = useCallback(
     (text: string) => {
-      if (!re) {
-        setValue(text);
-      } else if (!text) {
-        setValue('');
-        setInternalValue('');
+      if (re) {
+        if (!text) {
+          setValue('');
+          setInternalValue('');
+        }
+      } else if (onValueChange) {
+        onValueChange(text);
       }
 
       if (onChangeText) {
         onChangeText(text);
       }
     },
-    [onChangeText, re],
+    [onChangeText, onValueChange, re],
   );
 
   const handleKeyPress = useCallback(
@@ -80,19 +83,15 @@ export function TextInput({
             : newInternalValue;
 
           if (onValueChange) {
-            if (re) {
-              const isOldValid = re.test(value);
-              const isNewValid = re.test(newValue);
+            const isOldValid = re.test(value);
+            const isNewValid = re.test(newValue);
 
-              const hasChanged = isNewValid !== isOldValid;
+            const hasChanged = isNewValid !== isOldValid;
 
-              if (isNewValid) {
-                onValueChange(newValue);
-              } else if (hasChanged) {
-                onValueChange(null);
-              }
-            } else {
-              onValueChange(newValue || null);
+            if (isNewValid) {
+              onValueChange(newValue);
+            } else if (hasChanged) {
+              onValueChange(null);
             }
           }
 
@@ -114,7 +113,7 @@ export function TextInput({
       {...rest}
       onChangeText={handleChangeText}
       onKeyPress={handleKeyPress}
-      value={value}
+      value={re ? value : valueProp}
     />
   );
 }
