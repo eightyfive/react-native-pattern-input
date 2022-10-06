@@ -1,9 +1,9 @@
 import 'react-native';
 import React from 'react';
 
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { render, screen } from '@testing-library/react-native';
 import { UsernameInput } from './username-input';
-import { ReactTestInstance } from 'react-test-renderer';
+import { fireChangeText } from './test-utils';
 
 describe('UsernameInput', () => {
   test('onValueChange', () => {
@@ -13,26 +13,16 @@ describe('UsernameInput', () => {
       <UsernameInput
         placeholder="test"
         onValueChange={handleChange}
-        value="j"
+        value="john"
       />,
     );
 
     const el = screen.getByPlaceholderText('test');
 
-    fireKeyPress(el, 'o');
-    expect(handleChange).toHaveBeenCalledWith('jo');
-
-    fireKeyPress(el, '!');
+    fireChangeText(el, 'john!');
     expect(handleChange).toHaveBeenCalledWith(null);
 
-    fireKeyPress(el, 'Backspace');
-    expect(handleChange).toHaveBeenCalledWith('jo');
-
-    fireKeyPress(el, '8');
-    expect(handleChange).toHaveBeenCalledWith('jo8');
+    fireChangeText(el, 'john8');
+    expect(handleChange).toHaveBeenCalledWith('john8');
   });
 });
-
-function fireKeyPress(el: ReactTestInstance, key: string) {
-  fireEvent(el, 'onKeyPress', { nativeEvent: { key } });
-}

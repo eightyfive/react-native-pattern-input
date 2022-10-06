@@ -45,35 +45,32 @@ export function TextInput({
 
   const handleChangeText = useCallback(
     (text: string) => {
-      if (re) {
-        if (!text) {
-          setValue('');
-          setInternalValue('');
-        }
-      } else if (onValueChange) {
-        onValueChange(text);
+      if (template && !text) {
+        setValue('');
+        setInternalValue('');
+      }
+
+      if (!template && re && onValueChange) {
+        onValueChange(re.test(text) ? text : null);
       }
 
       if (onChangeText) {
         onChangeText(text);
       }
     },
-    [onChangeText, onValueChange, re],
+    [onChangeText, onValueChange, re, template],
   );
 
   const handleKeyPress = useCallback(
     (ev: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
-      if (re) {
+      if (template) {
         const { key } = ev.nativeEvent;
 
         let newInternalValue = internalValue;
 
         if (key === KEY_BACKSPACE) {
           newInternalValue = newInternalValue.slice(0, -1);
-        } else if (
-          !template ||
-          (template && isCharValid(key, template, internalValue.length))
-        ) {
+        } else if (isCharValid(key, template, internalValue.length)) {
           newInternalValue += key;
         }
 
@@ -82,17 +79,8 @@ export function TextInput({
             ? formatInput(newInternalValue, template)
             : newInternalValue;
 
-          if (onValueChange) {
-            const isOldValid = re.test(value);
-            const isNewValid = re.test(newValue);
-
-            const hasChanged = isNewValid !== isOldValid;
-
-            if (isNewValid) {
-              onValueChange(newValue);
-            } else if (hasChanged) {
-              onValueChange(null);
-            }
+          if (re && onValueChange) {
+            onValueChange(re.test(newValue) ? newValue : null);
           }
 
           setValue(newValue);
@@ -104,7 +92,7 @@ export function TextInput({
         onKeyPress(ev);
       }
     },
-    [internalValue, template, onKeyPress, re, value, onValueChange],
+    [internalValue, template, onKeyPress, re, onValueChange],
   );
 
   // Render

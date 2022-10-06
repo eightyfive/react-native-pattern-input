@@ -1,9 +1,9 @@
 import 'react-native';
 import React from 'react';
 
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { render, screen } from '@testing-library/react-native';
 import { DateInput } from './date-input';
-import { ReactTestInstance } from 'react-test-renderer';
+import { fireKeyPress } from './test-utils';
 
 describe('DateInput', () => {
   test('onValueChange', () => {
@@ -42,7 +42,3 @@ describe('DateInput', () => {
     expect(el.props.value).toBe('01-12-1970');
   });
 });
-
-function fireKeyPress(el: ReactTestInstance, key: string) {
-  fireEvent(el, 'onKeyPress', { nativeEvent: { key } });
-}
