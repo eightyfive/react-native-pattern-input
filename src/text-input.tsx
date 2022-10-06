@@ -70,7 +70,10 @@ export function TextInput({
 
         if (key === KEY_BACKSPACE) {
           newInternalValue = newInternalValue.slice(0, -1);
-        } else if (isCharValid(key, template, internalValue.length)) {
+        } else if (
+          key.length === 1 &&
+          isCharValid(key, template, internalValue.length)
+        ) {
           newInternalValue += key;
         }
 
