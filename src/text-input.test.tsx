@@ -42,12 +42,6 @@ describe('TextInput', () => {
     const el = screen.getByPlaceholderText('test');
     expect(el.props.value).toBe('1979-');
 
-    // 197
-    fireChangeText(el, '1979');
-    expect(el.props.value).toBe('197');
-    expect(handleChange).toHaveBeenCalledWith(null);
-
-    // 1979
     fireChangeText(el, '1970-0');
     expect(el.props.value).toBe('1970-0');
     expect(handleChange).toHaveBeenCalledWith(null);

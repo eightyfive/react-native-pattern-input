@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   TextInput as RNTextInput,
   TextInputProps as RNTextInputProps,
@@ -16,15 +16,15 @@ export function TextInput({
   onValueChange,
   onChangeText,
   pattern,
-  value: valueProp,
+  value: valueProp = '',
   ...rest
 }: TextInputProps) {
   // Hooks
-  const initialValue = valueProp || '';
+  const [value, setValue] = useState('');
 
-  const [value, setValue] = useState(
-    template ? formatInput(initialValue, template) : initialValue,
-  );
+  useEffect(() => {
+    setValue(template ? formatInput(valueProp, template) : valueProp);
+  }, [template, valueProp]);
 
   const re = useMemo(
     () =>
