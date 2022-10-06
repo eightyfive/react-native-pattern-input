@@ -36,28 +36,27 @@ export function TextInput({
 
   const handleChangeText = useCallback(
     (text: string) => {
-      if (onValueChange) {
-        if (template) {
-          if (!text) {
-            setValue('');
-            onValueChange(null);
+      let newValue;
+
+      if (text && template) {
+        newValue =
+          text.length < value.length
+            ? handleBwd(text, value, template)
+            : handleFwd(text, value, template);
+      } else {
+        newValue = text;
+      }
+
+      if (newValue !== value) {
+        if (onValueChange) {
+          if (re) {
+            onValueChange(re.test(newValue) ? newValue : null);
           } else {
-            const newValue =
-              text.length < value.length
-                ? handleBwd(text, value, template)
-                : handleFwd(text, value, template);
-
-            if (newValue !== value) {
-              onValueChange(re?.test(newValue) ? newValue : null);
-
-              setValue(newValue);
-            }
+            onValueChange(newValue);
           }
-        } else if (re) {
-          onValueChange(re.test(text) ? text : null);
-        } else {
-          onValueChange(text);
         }
+
+        setValue(newValue);
       }
 
       if (onChangeText) {
