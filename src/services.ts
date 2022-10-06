@@ -1,14 +1,16 @@
-const RE_ALPHA = /[A-Za-z]/;
-const RE_ALPHANUM = /[A-Za-z0-9]/;
+const RE_ALPHA = /[a-z]/i;
+const RE_ALPHANUM = /[a-z0-9]/i;
 const RE_NUM = /[0-9]/;
 const RE_RESERVED = /[0aA]/;
-const RE_ESCAPE = /([\W_])/g;
+const RE_NOT_ALPHANUM = /([\W_])/g;
 
 export function unformat(text: string) {
-  return text.replace(RE_ESCAPE, '');
+  return text.replace(RE_NOT_ALPHANUM, '');
 }
 
-export function formatInput(input: string, template: string) {
+export function formatInput(text: string, template: string) {
+  const input = unformat(text);
+
   if (!input) {
     return '';
   }
@@ -53,8 +55,12 @@ export function isCharValid(
   );
 }
 
+export function isInputChar(char: string) {
+  return !RE_NOT_ALPHANUM.test(char);
+}
+
 export function patternize(template: string) {
-  const tmpl = template.replace(RE_ESCAPE, '\\$1');
+  const tmpl = template.replace(RE_NOT_ALPHANUM, '\\$1');
 
   let pattern = '';
 
@@ -71,4 +77,36 @@ export function patternize(template: string) {
   }
 
   return pattern;
+}
+
+export function handleBwd(newText: string, oldText: string, template: string) {
+  let text;
+
+  if (!isInputChar(oldText.charAt(oldText.length - 1))) {
+    text = newText.slice(0, -1);
+  } else {
+    text = newText;
+  }
+
+  return formatInput(text, template);
+}
+
+export function handleFwd(newText: string, oldText: string, template: string) {
+  let text;
+
+  if (!isInputChar(newText.charAt(newText.length - 1))) {
+    text = newText;
+  } else {
+    const alphanum = unformat(newText);
+    const index = alphanum.length - 1;
+    const char = alphanum.charAt(index);
+
+    if (isCharValid(char, template, index)) {
+      text = newText;
+    } else {
+      text = oldText;
+    }
+  }
+
+  return formatInput(text, template);
 }

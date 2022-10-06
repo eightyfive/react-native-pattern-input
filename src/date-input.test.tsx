@@ -3,7 +3,7 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react-native';
 import { DateInput } from './date-input';
-import { fireKeyPress } from './test-utils';
+import { fireChangeText } from './test-utils';
 
 describe('DateInput', () => {
   test('onValueChange', () => {
@@ -21,10 +21,10 @@ describe('DateInput', () => {
     const el = screen.getByPlaceholderText('test');
     expect(el.props.value).toBe('2022/12/30');
 
-    fireKeyPress(el, 'Backspace');
+    fireChangeText(el, '2022/12/3');
     expect(handleChange).toHaveBeenCalledWith(null);
 
-    fireKeyPress(el, '1');
+    fireChangeText(el, '2022/12/31');
     expect(handleChange).toHaveBeenCalledWith(new Date(2022, 11, 31));
   });
 

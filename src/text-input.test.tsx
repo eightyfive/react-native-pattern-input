@@ -3,7 +3,7 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react-native';
 import { TextInput } from './text-input';
-import { fireChangeText, fireKeyPress } from './test-utils';
+import { fireChangeText } from './test-utils';
 
 describe('TextInput', () => {
   test('pattern', () => {
@@ -35,52 +35,30 @@ describe('TextInput', () => {
         format="0000-00-00"
         placeholder="test"
         onValueChange={handleChange}
-        value="1970"
+        value="1979"
       />,
     );
 
     const el = screen.getByPlaceholderText('test');
-    expect(el.props.value).toBe('1970-');
+    expect(el.props.value).toBe('1979-');
 
     // 197
-    fireKeyPress(el, 'Backspace');
+    fireChangeText(el, '1979');
     expect(el.props.value).toBe('197');
     expect(handleChange).toHaveBeenCalledWith(null);
 
     // 1979
-    fireKeyPress(el, '9');
-    expect(el.props.value).toBe('1979-');
+    fireChangeText(el, '1970-0');
+    expect(el.props.value).toBe('1970-0');
     expect(handleChange).toHaveBeenCalledWith(null);
 
-    // 19790
-    fireKeyPress(el, '0');
-    expect(el.props.value).toBe('1979-0');
+    fireChangeText(el, '1970-08-0');
+    expect(el.props.value).toBe('1970-08-0');
     expect(handleChange).toHaveBeenCalledWith(null);
 
-    // 197901
-    fireKeyPress(el, '1');
-    expect(el.props.value).toBe('1979-01-');
-    expect(handleChange).toHaveBeenCalledWith(null);
-
-    // 19790
-    fireKeyPress(el, 'Backspace');
-    expect(el.props.value).toBe('1979-0');
-    expect(handleChange).toHaveBeenCalledWith(null);
-
-    // 197908
-    fireKeyPress(el, '8');
-    expect(el.props.value).toBe('1979-08-');
-    expect(handleChange).toHaveBeenCalledWith(null);
-
-    // 1979080
-    fireKeyPress(el, '0');
-    expect(el.props.value).toBe('1979-08-0');
-    expect(handleChange).toHaveBeenCalledWith(null);
-
-    // 19790801
-    fireKeyPress(el, '1');
-    expect(el.props.value).toBe('1979-08-01');
-    expect(handleChange).toHaveBeenCalledWith('1979-08-01');
+    fireChangeText(el, '1970-08-01');
+    expect(el.props.value).toBe('1970-08-01');
+    expect(handleChange).toHaveBeenCalledWith('1970-08-01');
   });
 
   test('format + pattern (ignore)', () => {
@@ -99,10 +77,10 @@ describe('TextInput', () => {
     const el = screen.getByPlaceholderText('test');
     expect(el.props.value).toBe('1970-12-');
 
-    fireKeyPress(el, '3');
+    fireChangeText(el, '1970-12-3');
     expect(handleChange).toHaveBeenCalledWith(null);
 
-    fireKeyPress(el, '1');
+    fireChangeText(el, '1970-12-31');
     expect(handleChange).toHaveBeenCalledWith('1970-12-31');
   });
 });
