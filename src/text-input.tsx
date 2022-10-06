@@ -68,10 +68,6 @@ export function TextInput({
 
   // Render
   return (
-    <RNTextInput
-      {...rest}
-      onChangeText={handleChangeText}
-      value={re ? value : valueProp}
-    />
+    <RNTextInput {...rest} onChangeText={handleChangeText} value={value} />
   );
 }
