@@ -1,8 +1,8 @@
 import { formatInput as format, patternize, unformat } from './services';
 
-const DATE_FORMAT = '39/19/2199';
-const PHONE_FORMAT = '+(99) 999-999-999';
-const EXPIRY_FORMAT = '99-19'; // YY-MM for testing purpose
+const DATE_FORMAT = '00/00/0000';
+const PHONE_FORMAT = '+(00) 000-000-000';
+const EXPIRY_FORMAT = '00-00'; // YY-MM for testing purpose
 
 describe('Format', () => {
   it('formats date', () => {
@@ -38,9 +38,6 @@ describe('Format', () => {
     expect(format('22', EXPIRY_FORMAT)).toBe('22-');
     expect(format('220', EXPIRY_FORMAT)).toBe('22-0');
     expect(format('2201', EXPIRY_FORMAT)).toBe('22-01');
-
-    // Fails (`3` (month) > `1` temlate constrain)
-    expect(format('223', EXPIRY_FORMAT)).toBe('22-');
   });
 });
 

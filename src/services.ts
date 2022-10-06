@@ -1,7 +1,7 @@
 const RE_ALPHA = /[A-Za-z]/;
 const RE_ALPHANUM = /[A-Za-z0-9]/;
 const RE_NUM = /[0-9]/;
-const RE_RESERVED = /[0-9aA]/;
+const RE_RESERVED = /[0aA]/;
 const RE_ESCAPE = /([\W_])/g;
 
 export function unformat(text: string) {
@@ -47,9 +47,7 @@ export function isCharValid(
   const templateChar = unformat(template).charAt(index);
 
   return (
-    (RE_NUM.test(templateChar) &&
-      RE_NUM.test(inputChar) &&
-      Number(inputChar) <= Number(templateChar)) ||
+    (templateChar === '0' && RE_NUM.test(inputChar)) ||
     (templateChar === 'a' && RE_ALPHA.test(inputChar)) ||
     (templateChar === 'A' && RE_ALPHANUM.test(inputChar))
   );
@@ -63,7 +61,7 @@ export function patternize(template: string) {
   for (const char of tmpl) {
     if (!RE_RESERVED.test(char)) {
       pattern += char;
-    } else if (RE_NUM.test(char)) {
+    } else if (char === '0') {
       pattern += '\\d';
     } else if (char === 'a') {
       pattern += '[A-Za-z]';

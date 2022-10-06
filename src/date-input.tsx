@@ -52,25 +52,21 @@ export function DateInput({
   );
 }
 
-const FORMAT_YEAR = '9999';
-const FORMAT_MONTH = '19';
-const FORMAT_DAY = '39';
-
 function getTemplate(format: Format, separator: string) {
   if (format === 'DMY') {
-    return [FORMAT_DAY, FORMAT_MONTH, FORMAT_YEAR].join(separator);
+    return ['00', '00', '0000'].join(separator);
   }
 
   if (format === 'MDY') {
-    return [FORMAT_MONTH, FORMAT_DAY, FORMAT_YEAR].join(separator);
+    return ['00', '00', '0000'].join(separator);
   }
 
   if (format === 'YDM') {
-    return [FORMAT_YEAR, FORMAT_DAY, FORMAT_MONTH].join(separator);
+    return ['0000', '00', '00'].join(separator);
   }
 
   if (format === 'YMD') {
-    return [FORMAT_YEAR, FORMAT_MONTH, FORMAT_DAY].join(separator);
+    return ['0000', '00', '00'].join(separator);
   }
 
   // Never happens
