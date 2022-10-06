@@ -45,7 +45,9 @@ export function TextInput({
 
   const handleChangeText = useCallback(
     (text: string) => {
-      if (!text) {
+      if (!re) {
+        setValue(text);
+      } else if (!text) {
         setValue('');
         setInternalValue('');
       }
@@ -54,48 +56,50 @@ export function TextInput({
         onChangeText(text);
       }
     },
-    [onChangeText],
+    [onChangeText, re],
   );
 
   const handleKeyPress = useCallback(
     (ev: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
-      const { key } = ev.nativeEvent;
+      if (re) {
+        const { key } = ev.nativeEvent;
 
-      let newInternalValue = internalValue;
+        let newInternalValue = internalValue;
 
-      if (key === KEY_BACKSPACE) {
-        newInternalValue = newInternalValue.slice(0, -1);
-      } else if (
-        !template ||
-        (template && isCharValid(key, template, internalValue.length))
-      ) {
-        newInternalValue += key;
-      }
-
-      if (newInternalValue !== internalValue) {
-        const newValue = template
-          ? formatInput(newInternalValue, template)
-          : newInternalValue;
-
-        if (onValueChange) {
-          if (re) {
-            const isOldValid = re.test(value);
-            const isNewValid = re.test(newValue);
-
-            const hasChanged = isNewValid !== isOldValid;
-
-            if (isNewValid) {
-              onValueChange(newValue);
-            } else if (hasChanged) {
-              onValueChange(null);
-            }
-          } else {
-            onValueChange(newValue || null);
-          }
+        if (key === KEY_BACKSPACE) {
+          newInternalValue = newInternalValue.slice(0, -1);
+        } else if (
+          !template ||
+          (template && isCharValid(key, template, internalValue.length))
+        ) {
+          newInternalValue += key;
         }
 
-        setValue(newValue);
-        setInternalValue(newInternalValue);
+        if (newInternalValue !== internalValue) {
+          const newValue = template
+            ? formatInput(newInternalValue, template)
+            : newInternalValue;
+
+          if (onValueChange) {
+            if (re) {
+              const isOldValid = re.test(value);
+              const isNewValid = re.test(newValue);
+
+              const hasChanged = isNewValid !== isOldValid;
+
+              if (isNewValid) {
+                onValueChange(newValue);
+              } else if (hasChanged) {
+                onValueChange(null);
+              }
+            } else {
+              onValueChange(newValue || null);
+            }
+          }
+
+          setValue(newValue);
+          setInternalValue(newInternalValue);
+        }
       }
 
       if (onKeyPress) {
