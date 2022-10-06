@@ -1,4 +1,10 @@
-import { formatInput as format, patternize, unformat } from './services';
+import {
+  formatInput as format,
+  handleBwd,
+  handleFwd,
+  patternize,
+  unformat,
+} from './services';
 
 const DATE_FORMAT = '00/00/0000';
 const PHONE_FORMAT = '+(00) 000-000-000';
@@ -72,5 +78,30 @@ describe('Patternize', () => {
     const re = new RegExp(`^${pattern}$`);
 
     expect(re.test('+(66) 959-543-904')).toBe(true);
+  });
+});
+
+describe('Type', () => {
+  it('types fwd', () => {
+    let value;
+
+    value = handleFwd('abc', 'ab', 'aa-aa');
+    expect(value).toBe('ab-c');
+
+    value = handleFwd('ab-', 'ab', 'aa-aa');
+    expect(value).toBe('ab-');
+  });
+
+  it('types bwd', () => {
+    let value;
+
+    value = handleBwd('a', 'ab', 'aa-aa');
+    expect(value).toBe('a');
+
+    value = handleBwd('ab', 'ab-', 'aa-aa');
+    expect(value).toBe('a');
+
+    value = handleBwd('ab', 'ab-cd-ef', 'aa-aa-aa');
+    expect(value).toBe('ab-');
   });
 });

@@ -1,11 +1,10 @@
 const RE_ALPHA = /[a-z]/i;
 const RE_ALPHANUM = /[a-z0-9]/i;
+const RE_ALPHANUM_NOT = /([^a-z0-9])/gi;
 const RE_NUM = /[0-9]/;
-const RE_RESERVED = /[0aA]/;
-const RE_NOT_ALPHANUM = /([\W_])/g;
 
 export function unformat(text: string) {
-  return text.replace(RE_NOT_ALPHANUM, '');
+  return text.replace(RE_ALPHANUM_NOT, '');
 }
 
 export function formatInput(text: string, template: string) {
@@ -19,7 +18,7 @@ export function formatInput(text: string, template: string) {
   let value = '';
 
   for (const templateChar of template) {
-    if (!RE_RESERVED.test(templateChar)) {
+    if (!isInputChar(templateChar)) {
       value += templateChar;
       continue;
     }
@@ -56,16 +55,16 @@ export function isCharValid(
 }
 
 export function isInputChar(char: string) {
-  return !RE_NOT_ALPHANUM.test(char);
+  return RE_ALPHANUM.test(char);
 }
 
 export function patternize(template: string) {
-  const tmpl = template.replace(RE_NOT_ALPHANUM, '\\$1');
+  const tmpl = template.replace(RE_ALPHANUM_NOT, '\\$1');
 
   let pattern = '';
 
   for (const char of tmpl) {
-    if (!RE_RESERVED.test(char)) {
+    if (!isInputChar(char)) {
       pattern += char;
     } else if (char === '0') {
       pattern += '\\d';
@@ -82,7 +81,10 @@ export function patternize(template: string) {
 export function handleBwd(newText: string, oldText: string, template: string) {
   let text;
 
-  if (!isInputChar(oldText.charAt(oldText.length - 1))) {
+  const isBackspace = oldText.length - newText.length === 1;
+  const oldChar = oldText.charAt(oldText.length - 1);
+
+  if (isBackspace && !isInputChar(oldChar)) {
     text = newText.slice(0, -1);
   } else {
     text = newText;
